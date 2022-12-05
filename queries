@@ -1,0 +1,106 @@
+/*1-*isplay the paper_id and the 
+reviewer department name who 
+reviewed the paper “t2”*/
+
+select rev_email
+from paper_rev pr 
+/*we are matching the paper id in pr with the paper id in the paper with the title t2;*/
+where pr.paper_id = (select distinct paper_id
+					from paper
+					where title = 't2');
+                    
+
+/*2-Display all the papers that are 
+published by the author 
+“auth4” and the respective 
+reviwer and score. */
+
+                    
+select pr.rev_email,pr.score
+from paper_rev pr, (select distinct p.paper_id,p.title
+					from paper p
+					where auth_email = (select distinct auth_email
+					from author
+					where auth_name = 'auth4')) pid
+where pr.paper_id = pid.paper_id;
+
+/*or*/
+
+select distinct pr.paper_id,pr.rev_email,pr.score
+from paper_rev pr
+inner join paper on pr.paper_id = paper.paper_id
+where paper.auth_email = (select auth_email from author where auth_name = 'auth4');
+
+/*3-Display the paper_id and 
+topic_name where score is >5 */
+
+select distinct p.paper_id,p.topic
+from paper p,(select paper_id from review where tot_score >=3) r
+where r.paper_id = p.paper_id;
+
+/*4-Display the paper status 
+“paper_id”. 
+*/
+
+select stat
+from paper
+where paper_id = 'A6';
+
+/*5-Display the comments of 
+the paper and the author name 
+and the reviewer name of paper
+title “t1”. */
+
+select distinct X.auth_email,pr.rev_email,pr.rev_comments
+from paper_rev pr,(select distinct paper_id,auth_email from paper where title = 't1') X
+where pr.paper_id = X.paper_id;
+
+/*6-Display the author and the 
+committee comments where 
+paper id is “A4”*/
+
+select p.auth_comments,r.commitee_comments
+from paper p,review r
+where p.paper_id = 'A4' and r.paper_id = 'A4';
+
+/*or*/
+
+select distinct auth_comments,commitee_comments
+from review
+inner join paper on paper.paper_id = review.paper_id
+where review.paper_id = 'A4';
+
+/*7-Display the topics that are 
+intrested by the reviewer 
+“rn1”.*/
+
+select topics
+from rev_topics
+where rev_email = (select distinct rev_email from reviewer where rev_name = 'rn1');
+
+/*8-Display name of the dept of the 
+paper_”t2”. 
+*/
+
+select distinct pd.dept
+from paper_dept pd
+where pd.topic = (select distinct topic from paper where title = 't6');
+
+/*9-Display the file name of the paper 
+ID --- need to write*/
+
+/*Display the paper_id and 
+topic_name where score is <3. */
+
+select distinct p.paper_id,p.topic
+from paper p,(select paper_id from review where tot_score <3) r
+where r.paper_id = p.paper_id;
+
+/*11-Display all the recommendation of 
+the paper_”Name” by the 
+reviewer_rv_email and author 
+name. */
+
+commit;
+
+
