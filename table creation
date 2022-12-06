@@ -1,0 +1,100 @@
+create database review_system;
+use review_system;
+
+create table author(
+auth_email varchar(20) primary key,
+auth_name varchar(20) not null,
+auth_dept varchar(20) not null,
+auth_address varchar(20) not null
+);
+
+create table reviewer(
+rev_email varchar(20) primary key,
+rev_name varchar(20) not null,
+rev_affliation varchar(20) not null,
+rev_dept varchar(10) not null,
+rev_phn bigint
+);
+
+create table paper(
+paper_id varchar(10) not null,
+title varchar(15) not null,
+auth_email varchar(20) not null,
+rev_email varchar(20) not null,
+foreign key (auth_email) references author(auth_email) on delete cascade on update cascade,
+foreign key (rev_email) references reviewer(rev_email) on delete cascade on update cascade,
+primary key(paper_id,auth_email,rev_email)
+);
+
+alter table paper
+drop foreign key paper_ibfk_2 ;
+
+alter table paper
+drop column rev_email;
+
+create table paper_rev(
+paper_id varchar(10) not null,
+rev_email varchar(20) not null,
+rev_comments varchar(200),
+score int,
+foreign key (rev_email) references reviewer(rev_email)
+);
+
+alter table paper_rev
+drop foreign key paper_rev_ibfk_1;
+
+alter table paper_rev
+drop column rev_email;
+
+alter table paper_rev
+add column rev_email varchar(20);
+alter table paper_rev
+add foreign key (rev_email) references reviewer(rev_email) on delete cascade on update cascade;
+
+desc author;
+desc paper;
+desc reviewer;
+
+create table review(
+paper_id varchar(10) not null,
+rev_email varchar(20) not null,
+commitee_comments varchar(200),
+score int,
+foreign key (paper_id) references paper(paper_id) on delete cascade on update cascade,
+foreign key (rev_email) references reviewer(rev_email) on delete cascade on update cascade
+);
+
+alter table review
+drop foreign key review_ibfk_2;
+
+alter table review
+drop column rev_email;
+
+alter table review
+rename column score to tot_score;
+
+alter table paper
+add column auth_comments varchar(200);
+
+
+create table rev_topics(
+rev_email varchar(20) not null,
+topics varchar(20)
+);
+
+create table paper_dept(
+dept varchar(10),
+topic varchar(10)
+);
+
+alter table paper_dept
+modify column topic varchar(30);
+
+insert into paper_dept values
+('cse','AI'),
+('cse','DL'),
+('cse','block chain'),
+('cse','d apps'),
+('ece','iot'),
+('cse','ethichal hacking');
+
